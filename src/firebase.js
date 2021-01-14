@@ -1,14 +1,15 @@
 import firebase from "firebase";
+import ".";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAE85YjxzsbMQfzM_nll6gHawBC22dMowo",
-  authDomain: "twittter-e8c5e.firebaseapp.com",
-  projectId: "twittter-e8c5e",
-  storageBucket: "twittter-e8c5e.appspot.com",
-  messagingSenderId: "520525490490",
-  appId: "1:520525490490:web:6be1a2d1b8b6d5fb460803",
-  measurementId: "G-W2JJT274TL",
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGINGING_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 export default firebase.initializeApp(firebaseConfig);
