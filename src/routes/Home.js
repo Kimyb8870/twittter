@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { dbService } from "../fbInstance";
 
-const Home = () => {
+const Home = ({ userObj }) => {
   const [twittt, setTwittt] = useState("");
   const [twittts, setTwittts] = useState([]);
 
-  const getTwittts = async () => {
-    const data = await dbService.collection("twittts").get();
-    data.forEach((doc) => {
-      const twitttObject = {
-        key: doc.id,
-        id: doc.id,
-        ...doc.data(),
-      };
-
-      setTwittts((prev) => [twitttObject, ...prev]);
-    });
-  };
-
   useEffect(() => {
-    getTwittts();
+    dbService
+      .collection("twittts")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        setTwittts(
+          snapshot.docs.map((doc) => {
+            const twitttObject = {
+              key: doc.id,
+              id: doc.id,
+              ...doc.data(),
+            };
+            return twitttObject;
+          })
+        );
+      });
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(twittt);
+    console.log(userObj);
     await dbService.collection("twittts").add({
-      twittt,
+      text: twittt,
       createdAt: Date.now(),
+      creatorId: userObj.uid,
     });
 
     setTwittt("");
@@ -55,7 +58,7 @@ const Home = () => {
       </form>
       {twittts?.map((twittt) => (
         <>
-          <h4 key={twittt.key}>{twittt.twittt}</h4>
+          <h4 key={twittt.key}>{twittt.text}</h4>
         </>
       ))}
     </div>
