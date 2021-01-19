@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { authService } from "../fbInstance";
+import { authService, firebaseInstance } from "../fbInstance";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [newAccount, setNewAccount] = useState(true);
+  const [newAccount, setNewAccount] = useState(false);
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -44,6 +44,39 @@ const Auth = () => {
     setNewAccount((prev) => !prev);
   };
 
+  const handleSocialClick = async (e) => {
+    const {
+      target: { name },
+    } = e;
+    let provider;
+
+    switch (name) {
+      case "google": {
+        provider = new firebaseInstance.auth.GoogleAuthProvider();
+        break;
+      }
+      case "github": {
+        provider = new firebaseInstance.auth.GithubAuthProvider();
+        break;
+      }
+    }
+    console.log("here we go");
+
+    firebaseInstance
+      .auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        const token = result.credential.accessToken;
+        const user = result.user;
+
+        console.log(token);
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -70,8 +103,12 @@ const Auth = () => {
         {newAccount ? "Create Account" : "Log In"}
       </span>
       <div>
-        <button>Continue with Google</button>
-        <button>Continue with GitHub</button>
+        <button name="google" onClick={handleSocialClick}>
+          Continue with Google
+        </button>
+        <button name="github" onClick={handleSocialClick}>
+          Continue with GitHub
+        </button>
       </div>
     </div>
   );

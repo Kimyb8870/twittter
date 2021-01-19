@@ -7,9 +7,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
 
   useEffect(() => {
-    console.log("useEffect fired");
     authService.onAuthStateChanged((user) => {
-      console.log("on AuthState Changed fired");
       if (user) {
         setIsLoggedIn(true);
       } else {
@@ -18,9 +16,6 @@ function App() {
       setInit(true);
     });
   }, []);
-
-  console.log(init);
-  console.log(isLoggedIn);
 
   return (
     <div className="App">
