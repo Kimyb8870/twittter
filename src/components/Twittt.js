@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { dbService } from "../fbInstance";
+import { dbService, storageService } from "../fbInstance";
 
 const Twittt = ({ twittt, isOwner }) => {
   const { id, text, fileUrl } = twittt;
@@ -11,6 +11,13 @@ const Twittt = ({ twittt, isOwner }) => {
     if (ok) {
       //delete
       await dbService.collection("twittts").doc(id).delete();
+      if (fileUrl) {
+        const storageRef = await storageService.refFromURL(fileUrl);
+        const storagePath = await storageService.refFromURL(fileUrl)._delegate
+          ._location.path;
+        console.log(storagePath);
+        await storageService.ref(storagePath).delete();
+      }
     }
   };
 
