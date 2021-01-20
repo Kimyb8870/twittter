@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Twittt from "../components/Twittt";
-import { dbService } from "../fbInstance";
+import { dbService, storageService } from "../fbInstance";
+import { v4 as uuidv4 } from "uuid";
 
 const Home = ({ userObj }) => {
   const [twittt, setTwittt] = useState("");
   const [twittts, setTwittts] = useState([]);
-  const [fileUrl, setFileUrl] = useState(null);
+  const [fileUrl, setFileUrl] = useState("");
 
   useEffect(() => {
     dbService
@@ -27,15 +28,31 @@ const Home = ({ userObj }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(twittt);
-    console.log(userObj);
-    await dbService.collection("twittts").add({
-      text: twittt,
-      createdAt: Date.now(),
-      creatorId: userObj.uid,
-    });
+    const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
+    let response;
+    let newTwittt;
+    if (fileUrl) {
+      response = await fileRef.putString(fileUrl, "data_url");
+      const fileDownloadUrl = await response.ref.getDownloadURL();
+      newTwittt = {
+        text: twittt,
+        createdAt: Date.now(),
+        creatorId: userObj.uid,
+        fileUrl: fileDownloadUrl,
+      };
+    } else {
+      newTwittt = {
+        text: twittt,
+        createdAt: Date.now(),
+        creatorId: userObj.uid,
+        fileUrl: null,
+      };
+    }
+
+    await dbService.collection("twittts").add(newTwittt);
 
     setTwittt("");
+    setFileUrl("");
   };
 
   const handleChange = (e) => {
@@ -50,20 +67,26 @@ const Home = ({ userObj }) => {
       target: { files },
     } = e;
     const theFile = files[0];
+    console.log(theFile);
 
-    const reader = new FileReader();
-    reader.onloadend = (finishedEvent) => {
-      const {
-        currentTarget: { result },
-      } = finishedEvent;
-      setFileUrl(result);
-    };
+    if (theFile) {
+      const reader = new FileReader();
 
-    reader.readAsDataURL(theFile);
+      reader.onloadend = (finishedEvent) => {
+        const {
+          currentTarget: { result },
+        } = finishedEvent;
+        setFileUrl(result);
+      };
+
+      reader.readAsDataURL(theFile);
+    } else {
+      setFileUrl("");
+    }
   };
 
   const handleClearPhoto = () => {
-    setFileUrl(null);
+    setFileUrl("");
   };
 
   return (

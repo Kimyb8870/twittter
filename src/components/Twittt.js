@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { dbService } from "../fbInstance";
 
 const Twittt = ({ twittt, isOwner }) => {
-  const { id, text } = twittt;
+  const { id, text, fileUrl } = twittt;
   const [editing, setEditing] = useState(false);
   const [newTwittt, setNewTwittt] = useState("");
 
@@ -34,6 +34,7 @@ const Twittt = ({ twittt, isOwner }) => {
   return (
     <div>
       <h4>{text}</h4>
+      {fileUrl && <img src={fileUrl} width="50px" height="50px" />}
       {isOwner && (
         <>
           <button onClick={handleDeleteClick}>Delete</button>
