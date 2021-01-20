@@ -5,6 +5,7 @@ import { dbService } from "../fbInstance";
 const Home = ({ userObj }) => {
   const [twittt, setTwittt] = useState("");
   const [twittts, setTwittts] = useState([]);
+  const [fileUrl, setFileUrl] = useState(null);
 
   useEffect(() => {
     dbService
@@ -44,6 +45,27 @@ const Home = ({ userObj }) => {
     setTwittt(value);
   };
 
+  const handleFileChange = (e) => {
+    const {
+      target: { files },
+    } = e;
+    const theFile = files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent) => {
+      const {
+        currentTarget: { result },
+      } = finishedEvent;
+      setFileUrl(result);
+    };
+
+    reader.readAsDataURL(theFile);
+  };
+
+  const handleClearPhoto = () => {
+    setFileUrl(null);
+  };
+
   return (
     <div>
       <h1>Home</h1>
@@ -55,7 +77,14 @@ const Home = ({ userObj }) => {
           value={twittt}
           onChange={handleChange}
         />
+        <input type="file" onChange={handleFileChange} />
         <input type="submit" value="Twittt" />
+        {fileUrl && (
+          <div>
+            <img src={fileUrl} width="50px" height="50px" />
+            <button onClick={handleClearPhoto}>Clear Image</button>
+          </div>
+        )}
       </form>
       {twittts?.map((twittt) => (
         <Twittt
