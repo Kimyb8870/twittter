@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Twittt from "../components/Twittt";
 import { dbService } from "../fbInstance";
 
 const Home = ({ userObj }) => {
@@ -57,9 +58,11 @@ const Home = ({ userObj }) => {
         <input type="submit" value="Twittt" />
       </form>
       {twittts?.map((twittt) => (
-        <>
-          <h4 key={twittt.key}>{twittt.text}</h4>
-        </>
+        <Twittt
+          key={twittt.id}
+          twittt={twittt}
+          isOwner={userObj.uid === twittt.creatorId ? true : false}
+        />
       ))}
     </div>
   );
