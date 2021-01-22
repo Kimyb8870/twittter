@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { authService, dbService } from "../fbInstance";
 
-const Profile = ({ userObj }) => {
+const Profile = ({ userObj, refreshUser }) => {
   const [twittts, setTwittts] = useState([]);
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 
@@ -32,10 +32,10 @@ const Profile = ({ userObj }) => {
   const handleDisplayNameSubmit = async (e) => {
     e.preventDefault();
     if (userObj.displayName !== newDisplayName) {
-      const response = await authService.currentUser.updateProfile({
+      await authService.currentUser.updateProfile({
         displayName: newDisplayName,
       });
-      await console.log(response);
+      refreshUser();
     }
   };
 
