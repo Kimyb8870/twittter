@@ -1,49 +1,8 @@
 import React, { useState } from "react";
-import { authService, firebaseInstance } from "../fbInstance";
+import AuthForm from "../components/AuthForm";
+import { firebaseInstance } from "../fbInstance";
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [newAccount, setNewAccount] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "email": {
-        setEmail(value);
-        break;
-      }
-      case "password": {
-        setPassword(value);
-        break;
-      }
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (newAccount) {
-        const data = await authService.createUserWithEmailAndPassword(
-          email,
-          password
-        );
-      } else {
-        const data = await authService.signInWithEmailAndPassword(
-          email,
-          password
-        );
-      }
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const toggleAccount = () => {
-    setNewAccount((prev) => !prev);
-  };
-
   const handleSocialClick = async (e) => {
     const {
       target: { name },
@@ -79,29 +38,7 @@ const Auth = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          required
-          placeholder="Email"
-          value={email}
-          name="email"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          value={password}
-          name="password"
-          onChange={handleChange}
-        />
-        <input type="submit" value={newAccount ? "Create Account" : "Log In"} />
-        {error}
-      </form>
-      <span onClick={toggleAccount}>
-        {newAccount ? "Create Account" : "Log In"}
-      </span>
+      <AuthForm />
       <div>
         <button name="google" onClick={handleSocialClick}>
           Continue with Google
